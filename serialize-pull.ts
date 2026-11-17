@@ -1,0 +1,61 @@
+// Pull request JSON shape.
+import type { Repo, Pull } from './store.ts';
+
+export function serializePull(pr: Pull, repo: Repo) {
+  const user = { login: 'golden-wren-79', id: 1, node_id: 'U_1', type: 'User', site_admin: false };
+  return {
+    id: pr.id,
+    node_id: `PR_${pr.id}`,
+    number: pr.number,
+    title: pr.title,
+    body: pr.body,
+    state: pr.merged ? 'closed' : pr.state,
+    locked: false,
+    draft: pr.draft,
+    merged: pr.merged,
+    mergeable: !pr.merged && pr.state === 'open',
+    mergeable_state: pr.merged ? 'unknown' : 'clean',
+    merged_at: pr.mergedAt,
+    closed_at: pr.closedAt,
+    merge_commit_sha: pr.mergeCommitSha,
+    user,
+    labels: [],
+    assignee: null,
+    assignees: [],
+    requested_reviewers: [],
+    milestone: null,
+    head: {
+      label: `golden-wren-79:${pr.head}`,
+      ref: pr.head,
+      sha: pr.headSha,
+      user,
+      repo: { id: repo.id, name: repo.name, full_name: repo.fullName },
+    },
+    base: {
+      label: `golden-wren-79:${pr.base}`,
+      ref: pr.base,
+      sha: pr.baseSha,
+      user,
+      repo: { id: repo.id, name: repo.name, full_name: repo.fullName },
+    },
+    _links: {
+      self: { href: `/api/v3/repos/${repo.fullName}/pulls/${pr.number}` },
+      html: { href: `https://github.com/${repo.fullName}/pull/${pr.number}` },
+      comments: { href: `/api/v3/repos/${repo.fullName}/issues/${pr.number}/comments` },
+    },
+    author_association: 'OWNER',
+    commits: pr.commits.length,
+    additions: 0,
+    deletions: 0,
+    changed_files: 0,
+    created_at: pr.createdAt,
+    updated_at: pr.updatedAt,
+    url: `/api/v3/repos/${repo.fullName}/pulls/${pr.number}`,
+    html_url: `https://github.com/${repo.fullName}/pull/${pr.number}`,
+    diff_url: `https://github.com/${repo.fullName}/pull/${pr.number}.diff`,
+    patch_url: `https://github.com/${repo.fullName}/pull/${pr.number}.patch`,
+    commits_url: `/api/v3/repos/${repo.fullName}/pulls/${pr.number}/commits`,
+    review_comments_url: `/api/v3/repos/${repo.fullName}/pulls/${pr.number}/comments`,
+    statuses_url: `/api/v3/repos/${repo.fullName}/statuses/${pr.headSha}`,
+  };
+}

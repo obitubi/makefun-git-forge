@@ -1,0 +1,105 @@
+// GitHub v3 JSON shapes for repositories.
+import type { Repo, Store } from './store.ts';
+
+const BASE = '/api/v3';
+
+export function repoTimestamps(repo: Repo) {
+  return { created_at: repo.createdAt, updated_at: repo.updatedAt, pushed_at: repo.updatedAt };
+}
+
+export function serializeRepo(repo: Repo, store: Store) {
+  const refs = store.refStore(repo);
+  const head = refs.get(`refs/heads/${repo.defaultBranch}`) ?? null;
+  return {
+    id: repo.id,
+    node_id: `R_${repo.id}`,
+    name: repo.name,
+    full_name: repo.fullName,
+    private: repo.private,
+    owner: {
+      login: repo.owner,
+      id: 1,
+      node_id: 'U_1',
+      avatar_url: `https://avatars.githubusercontent.com/u/1?v=4`,
+      type: 'User',
+      site_admin: false,
+    },
+    html_url: `https://github.com/${repo.fullName}`,
+    description: repo.description,
+    fork: repo.fork,
+    url: `${BASE}/repos/${repo.fullName}`,
+    forks_url: `${BASE}/repos/${repo.fullName}/forks`,
+    keys_url: `${BASE}/repos/${repo.fullName}/keys{/key_id}`,
+    collaborators_url: `${BASE}/repos/${repo.fullName}/collaborators{/collaborator}`,
+    teams_url: `${BASE}/repos/${repo.fullName}/teams`,
+    hooks_url: `${BASE}/repos/${repo.fullName}/hooks`,
+    issue_events_url: `${BASE}/repos/${repo.fullName}/issues/events{/number}`,
+    events_url: `${BASE}/repos/${repo.fullName}/events`,
+    assignees_url: `${BASE}/repos/${repo.fullName}/assignees{/user}`,
+    branches_url: `${BASE}/repos/${repo.fullName}/branches{/branch}`,
+    tags_url: `${BASE}/repos/${repo.fullName}/tags`,
+    blobs_url: `${BASE}/repos/${repo.fullName}/git/blobs{/sha}`,
+    git_tags_url: `${BASE}/repos/${repo.fullName}/git/tags{/sha}`,
+    git_refs_url: `${BASE}/repos/${repo.fullName}/git/refs{/sha}`,
+    trees_url: `${BASE}/repos/${repo.fullName}/git/trees{/sha}`,
+    statuses_url: `${BASE}/repos/${repo.fullName}/statuses/{sha}`,
+    languages_url: `${BASE}/repos/${repo.fullName}/languages`,
+    stargazers_url: `${BASE}/repos/${repo.fullName}/stargazers`,
+    contributors_url: `${BASE}/repos/${repo.fullName}/contributors`,
+    subscribers_url: `${BASE}/repos/${repo.fullName}/subscribers`,
+    subscription_url: `${BASE}/repos/${repo.fullName}/subscription`,
+    commits_url: `${BASE}/repos/${repo.fullName}/commits{/sha}`,
+    git_commits_url: `${BASE}/repos/${repo.fullName}/git/commits{/sha}`,
+    comments_url: `${BASE}/repos/${repo.fullName}/comments{/issue_number}`,
+    issue_comment_url: `${BASE}/repos/${repo.fullName}/issues/comments{/comment_id}`,
+    contents_url: `${BASE}/repos/${repo.fullName}/contents/{+path}`,
+    compare_url: `${BASE}/repos/${repo.fullName}/compare/{base}...{head}`,
+    merges_url: `${BASE}/repos/${repo.fullName}/merges`,
+    archive_url: `${BASE}/repos/${repo.fullName}/{archive_format}{/ref}`,
+    downloads_url: `${BASE}/repos/${repo.fullName}/downloads`,
+    issues_url: `${BASE}/repos/${repo.fullName}/issues{/number}`,
+    pulls_url: `${BASE}/repos/${repo.fullName}/pulls{/number}`,
+    milestones_url: `${BASE}/repos/${repo.fullName}/milestones{/number}`,
+    notifications_url: `${BASE}/repos/${repo.fullName}/notifications{?since,all,participating}`,
+    labels_url: `${BASE}/repos/${repo.fullName}/labels{/name}`,
+    releases_url: `${BASE}/repos/${repo.fullName}/releases{/id}`,
+    deployments_url: `${BASE}/repos/${repo.fullName}/deployments`,
+    ...repoTimestamps(repo),
+    git_url: `git://localhost/${repo.fullName}.git`,
+    ssh_url: `git@localhost:${repo.fullName}.git`,
+    clone_url: `http://localhost/${repo.fullName}.git`,
+    svn_url: `https://github.com/${repo.fullName}`,
+    homepage: repo.homepage,
+    size: 0,
+    stargazers_count: 0,
+    watchers_count: 0,
+    watchers: 0,
+    language: null,
+    has_issues: repo.hasIssues,
+    has_projects: repo.hasProjects,
+    has_downloads: repo.hasDownloads,
+    has_wiki: repo.hasWiki,
+    has_pages: false,
+    has_discussions: false,
+    forks_count: 0,
+    mirror_url: null,
+    archived: repo.archived,
+    disabled: repo.disabled,
+    open_issues_count: 0,
+    open_issues: 0,
+    forks: 0,
+    license: null,
+    allow_forking: true,
+    is_template: repo.isTemplate,
+    web_commit_signoff_required: false,
+    topics: repo.topics,
+    visibility: repo.visibility,
+    default_branch: repo.defaultBranch,
+    permissions: { admin: true, maintain: true, push: true, triage: true, pull: true },
+    node_ref: head,
+  };
+}
+
+export function serializeReposList(repos: Repo[], store: Store) {
+  return repos.map((r) => serializeRepo(r, store));
+}
